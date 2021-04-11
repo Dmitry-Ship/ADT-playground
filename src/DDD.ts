@@ -53,6 +53,25 @@ type SpecialParcel = {
   description: string;
 };
 
+type _SpecialParcel = {
+  parcelType: "_special";
+  weight: number;
+  size: Size;
+  description: string;
+};
+type SpecialParcel1 = {
+  parcelType: "special1";
+  weight: number;
+  size: Size;
+  description: string;
+};
+type SpecialParcel2 = {
+  parcelType: "special2";
+  weight: number;
+  size: Size;
+  description: string;
+};
+
 export type Parcel = DocumentsParcel | BoxParcel | SpecialParcel;
 
 const validateParcel = (parcel: Parcel): boolean => {
@@ -63,10 +82,11 @@ const validateParcel = (parcel: Parcel): boolean => {
       return parcel.weight < 1000;
     case "special":
       return parcel.description !== "";
+    default: {
+      const _exhaustiveCheck: never = parcel;
+      return false;
+    }
   }
-
-  const _exhaustiveCheck: never = parcel;
-  return false;
 };
 const iphone: Parcel = {
   parcelType: "box",

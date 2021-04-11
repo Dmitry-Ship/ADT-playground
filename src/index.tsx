@@ -28,18 +28,16 @@ type Person = {
 
 const john: Person = {
   name: "John",
-  // pet: {
-  //   name: "Spark",
-  //   toy: {
-  //     type: "chewtoy",
-  //   },
-  // },
+  pet: {
+    name: "Spark",
+    toy: {
+      type: "chewtoy",
+    },
+  },
 };
 
 const result = Maybe(john)
-  .map((person) => person.pet)
-  .map((pet) => pet?.toy.type)
-  .map((type) => type?.toLocaleUpperCase())
+  .map((person) => person.pet?.toy.type.toUpperCase())
   .getOrElse("NONE!");
 
 console.log("result", result);
