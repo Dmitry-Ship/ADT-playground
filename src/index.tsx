@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { Maybe } from "./monads";
+import { IEither, Left, Right } from "./monads/either";
+import { Maybe } from "./monads/maybe";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -41,6 +42,26 @@ const result = Maybe(john)
   .getOrElse("NONE!");
 
 console.log("result", result);
+
+function parseJSON<T>(json: string): IEither<Error, T> {
+  try {
+    return Right<T>(JSON.parse(json));
+    // @ts-ignore
+  } catch (e: Error) {
+    return Left<Error>(e);
+  }
+}
+
+type JSON = {
+  foo: boolean;
+};
+
+// const parsed = parseJSON<JSON>(`{ "foo": true }`)
+//   .map((value) => value)
+//   .map((value) => "value")
+//   .flatMap((value) => value);
+
+// console.log("parsed", parsed);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
