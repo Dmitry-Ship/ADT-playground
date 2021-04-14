@@ -13,55 +13,27 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-type PetToy = {
-  type: string;
-};
-
-type Pet = {
-  name: string;
-  toy: PetToy;
-};
-
-type Person = {
-  name: string;
-  pet?: Pet;
-};
-
-const john: Person = {
-  name: "John",
-  pet: {
-    name: "Spark",
-    toy: {
-      type: "chewtoy",
-    },
-  },
-};
-
-const result = Maybe(john)
-  .map((person) => person.pet?.toy.type.toUpperCase())
-  .getOrElse("NONE!");
-
-console.log("result", result);
-
-function parseJSON<T>(json: string): IEither<Error, T> {
-  try {
-    return Right<T>(JSON.parse(json));
-    // @ts-ignore
-  } catch (e: Error) {
-    return Left<Error>(e);
-  }
-}
-
-type JSON = {
+type MyJSON = {
   foo: boolean;
 };
 
-// const parsed = parseJSON<JSON>(`{ "foo": true }`)
-//   .map((value) => value)
-//   .map((value) => "value")
-//   .flatMap((value) => value);
+const parseJSON = (json: string) => () => JSON.parse(json);
 
-// console.log("parsed", parsed);
+const parseMy = parseJSON('{"foo":true}');
+
+const parsed = Right(null)
+  .fromTry<string, MyJSON>(parseMy)
+  .flatMap((value) => Right({ ...value, bar: true }))
+  .map((value) => ({ ...value, foo: !value.foo }))
+  .cata({
+    onLeft: (x) => x,
+    onRight: (x) => x,
+  });
+
+// const parsed = parseJSON<MYJSON>('"foo": "bar"').flatMapLeft((value) => value);
+// .flatMap((value) => Left(value));
+
+console.log("parsed", parsed);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

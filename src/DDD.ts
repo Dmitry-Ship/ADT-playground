@@ -69,3 +69,39 @@ const validateParcel = (parcel: Parcel): boolean => {
     }
   }
 };
+
+type RequestStatus<T, E> = {
+  isLoading: boolean;
+  data: T | null;
+  error: E | null;
+};
+
+type RequestStatusUnion<T, E> =
+  | {
+      type: "success";
+      data: T;
+    }
+  | {
+      type: "fail";
+      error: E;
+    }
+  | {
+      type: "pending";
+    };
+
+const renderResult = (
+  result: RequestStatusUnion<string[], string>
+): string[] => {
+  switch (result.type) {
+    case "success":
+      return result.data;
+    case "fail":
+      return [result.error];
+    case "pending":
+      return [""];
+    default: {
+      const _exhaustiveCheck: never = result;
+      return ["unhandled error"];
+    }
+  }
+};

@@ -1,6 +1,6 @@
 type IIdentity<T> = {
-  flatMap: <R>(f: (value: T) => R) => R;
-  map: <R>(f: (value: T) => R) => IIdentity<R>;
+  flatMap: <V>(f: (value: T) => V) => V;
+  map: <V>(f: (value: T) => V) => IIdentity<V>;
 };
 
 export const Identity = <T>(value: T): IIdentity<T> => ({

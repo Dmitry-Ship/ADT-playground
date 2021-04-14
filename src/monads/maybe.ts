@@ -1,7 +1,7 @@
 type MaybeBase<T> = {
-  flatMap: <R>(f: (value: T) => IMaybe<R>) => IMaybe<R>;
-  map: <R>(f: (value: T) => R) => IMaybe<R>;
-  getOrElse: <R>(fallback: R) => R | T;
+  flatMap: <V>(f: (value: T) => IMaybe<V>) => IMaybe<V>;
+  map: <V>(f: (value: T) => V) => IMaybe<V>;
+  getOrElse: <V>(fallback: V) => V | T;
   cata: <B, C>(onJust: (arg: T) => B, onNothing: () => C) => B | C;
 };
 
