@@ -1,28 +1,30 @@
-type MaybeBase<T> = {
+import { IEither, Left, Right } from "./either";
+
+export type IMaybe<T> = {
   flatMap: <V>(f: (value: T) => IMaybe<V>) => IMaybe<V>;
   map: <V>(f: (value: T) => V) => IMaybe<V>;
   getOrElse: <V>(fallback: V) => V | T;
-  cata: <B, C>(onJust: (arg: T) => B, onNothing: () => C) => B | C;
+  cata: <A, B>(onJust: (arg: T) => A, onNothing: () => B) => A | B;
+  toEither: <V>(leftVal: V) => IEither<V, T>;
+  type: "just" | "nothing";
 };
 
-type INothing<T> = { type: "nothing" } & MaybeBase<T>;
-type IJust<T> = { type: "just" } & MaybeBase<T>;
-type IMaybe<T> = INothing<T> | IJust<T>;
-
-const Just = <T>(value: T): IJust<T> => ({
+export const Just = <T>(value: T): IMaybe<T> => ({
   type: "just",
   flatMap: (f) => f(value),
   map: (f) => Maybe(f(value)),
-  getOrElse: (fallback) => value,
-  cata: (onJust, onNothing) => onJust(value),
+  getOrElse: () => value,
+  toEither: () => Right(value),
+  cata: (onJust) => onJust(value),
 });
 
-const Nothing = <T>(): INothing<T> => ({
+export const Nothing = <T>(): IMaybe<T> => ({
   type: "nothing",
   flatMap: () => Nothing(),
   map: () => Nothing(),
   getOrElse: (fallback) => fallback,
-  cata: (onJust, onNothing) => onNothing(),
+  toEither: (leftVal) => Left(leftVal),
+  cata: (_, onNothing) => onNothing(),
 });
 
 export const Maybe = <T>(value: T | null | undefined): IMaybe<T> =>

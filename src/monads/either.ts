@@ -1,33 +1,26 @@
-export type ILeft<L, R> = {
-  //   flatMapLeft: <V>(f: (value: L) => IEither<V, R>) => IEither<V, R>;
-  flatMap: <V>(f: (value: R) => IEither<L, V>) => ILeft<L, V>;
-  map: <V>(f: (value: R) => V) => ILeft<L, R>;
-  mapLeft: <V>(f: (value: L) => V) => IEither<V, R>;
+import { IMaybe, Maybe, Nothing } from "./maybe";
+
+export type IEither<L, R> = {
+  map: <V>(f: (val: R) => V) => IEither<L, V>;
+  flatMap: <V>(F: (val: R) => IEither<L, V>) => IEither<L, V>;
   cata: <A, B>(obj: { onLeft: (arg: L) => A; onRight: (arg: R) => B }) => A | B;
-  type: "left";
+  mapLeft: <F>(f: (leftVal: L) => F) => IEither<F, R>;
+  getOrElse: <V>(onLeft: (leftVal: L) => V) => V | R;
+  fromTry: <A, B>(f: CallableFunction) => IEither<A, B>;
+  toMaybe: () => IMaybe<R>;
+  type: "left" | "right";
 };
 
-export type IRight<L, R> = {
-  //   flatMapLeft: <V>(f: (value: L) => IEither<V, R>) => IRight<V, R>;
-  flatMap: <V>(f: (value: R) => IEither<L, V>) => IEither<L, V>;
-  map: <V>(f: (value: R) => V) => IEither<L, V>;
-  mapLeft: <V>(f: (value: L) => V) => IRight<L, R>;
-  cata: <A, B>(obj: { onLeft: (arg: L) => A; onRight: (arg: R) => B }) => A | B;
-  fromTry: <A, B>(fn: Function) => IEither<A, B>;
-  type: "right";
-};
-
-export type IEither<L, R> = ILeft<L, R> | IRight<L, R>;
-
-export const Right = <T>(value: T): IRight<never, T> => ({
+export const Right = <T>(value: T): IEither<never, T> => ({
   flatMap: (f) => f(value),
-  //   flatMapLeft: () => Right(value),
   map: (f) => Right(f(value)),
   mapLeft: () => Right(value),
   cata: (obj) => obj.onRight(value),
-  fromTry: (fn) => {
+  getOrElse: () => value,
+  toMaybe: () => Maybe(value),
+  fromTry: (f) => {
     try {
-      return Right(fn());
+      return Right(f());
     } catch (e) {
       return Left(e);
     }
@@ -35,20 +28,13 @@ export const Right = <T>(value: T): IRight<never, T> => ({
   type: "right",
 });
 
-export const Left = <T>(value: T): ILeft<T, never> => ({
+export const Left = <T>(value: T): IEither<T, never> => ({
   flatMap: () => Left(value),
-  //   flatMapLeft: (f) => f(value),
   map: () => Left(value),
   mapLeft: (f) => Left(f(value)),
   cata: (obj) => obj.onLeft(value),
+  getOrElse: (onLeft) => onLeft(value),
+  toMaybe: () => Nothing(),
+  fromTry: (f) => Left(f()),
   type: "left",
 });
-
-// export const Either = <T, E>(value: T): ILeft<T, never> => ({
-//   flatMap: () => Left(value),
-//   //   flatMapLeft: (f) => f(value),
-//   map: () => Left(value),
-//   mapLeft: (f) => Left(f(value)),
-//   cata: (obj) => obj.onLeft(value),
-//   type: "left",
-// });
