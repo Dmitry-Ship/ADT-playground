@@ -1,5 +1,5 @@
 type IIdentity<T> = {
-  flatMap: <V>(f: (value: T) => V) => V;
+  flatMap: <V>(f: (value: T) => IIdentity<V>) => IIdentity<V>;
   map: <V>(f: (value: T) => V) => IIdentity<V>;
   get: () => T;
 };

@@ -1,5 +1,6 @@
 import { Left, Right } from "./monads/either";
 import { Identity } from "./monads/identity";
+import { Writer } from "./monads/writer";
 export {};
 
 const isEmailValid = (email: string): boolean =>
@@ -39,3 +40,16 @@ const parsed = Identity<User>(user)
   .get();
 
 console.log("parsed", parsed);
+
+const writable = <T>(log: string, f: (arg: T) => T) => (value: T) =>
+  Writer(log, f(value));
+const increment = (value: number): number => value + 1;
+
+const val = Writer("started with 5", 5)
+  .map(increment)
+  .flatMap((value) => Writer("continues with", increment(value)))
+  .flatMap(writable("continues with", increment))
+  .writable("continues with", increment);
+
+console.log("log", val.getFirst());
+console.log("val", val.getSecond());
