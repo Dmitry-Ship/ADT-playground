@@ -1,6 +1,5 @@
-import { Left, Right } from "./monads/either";
-import { Identity } from "./monads/identity";
-import { Writer } from "./monads/writer";
+import { IEither, Left, Right } from "./monads/either";
+import { main, Parcel } from "./parcel FP";
 export {};
 
 const isEmailValid = (email: string): boolean =>
@@ -8,48 +7,33 @@ const isEmailValid = (email: string): boolean =>
     email
   );
 
-const validateUserEmail = (user: User) =>
-  isEmailValid(user.email) ? Right(user) : Left("email is invalid");
+const validateEmail = (email: string): IEither<string, string> =>
+  isEmailValid(email) ? Right(email) : Left("invalid email");
 
-type Pet = {
-  name: string;
-  kind: "dog" | "cat";
+const p: Parcel = {
+  parcelType: "special",
+  weight: 0,
+  size: "M",
+  description: "",
 };
 
-type User = {
-  name: string;
-  age: number;
-  email: string;
-};
-const setAge = (age: number) => <T extends {}>(value: T) => ({ ...value, age });
-const setEmail = (email: string) => <T extends {}>(value: T) => ({
-  ...value,
-  email,
-});
-const setPet = (pet: Pet) => <T extends {}>(value: T) => ({
-  ...value,
-  pet,
-});
+const email = validateEmail("bob@.com")
+  .map((e) => `📧  ${e}`)
+  .getOrElse((val) => val);
 
-const user = { name: "John", age: 23, email: "vooxil@gmail.com" };
+console.log("email", email);
 
-const parsed = Identity<User>(user)
-  .map(setAge(100))
-  .map(setEmail("hello@gmail.com"))
-  .map(setPet({ name: "Spike", kind: "dog" }))
-  .get();
+main(p);
 
-console.log("parsed", parsed);
+// const writable = <T>(log: string, f: (arg: T) => T) => (value: T) =>
+//   Writer(log, f(value));
+// const increment = (value: number): number => value + 1;
 
-const writable = <T>(log: string, f: (arg: T) => T) => (value: T) =>
-  Writer(log, f(value));
-const increment = (value: number): number => value + 1;
+// const val = Writer("started with 5", 5)
+//   .map(increment)
+//   .flatMap((value) => Writer("continues with", increment(value)))
+//   .flatMap(writable("continues with", increment))
+//   .writable("continues with", increment);
 
-const val = Writer("started with 5", 5)
-  .map(increment)
-  .flatMap((value) => Writer("continues with", increment(value)))
-  .flatMap(writable("continues with", increment))
-  .writable("continues with", increment);
-
-console.log("log", val.getFirst());
-console.log("val", val.getSecond());
+// console.log("log", val.getFirst());
+// console.log("val", val.getSecond());

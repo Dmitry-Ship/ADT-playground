@@ -1,10 +1,6 @@
 type Cash = {
   type: "cash";
-};
-
-type Check = {
-  type: "check";
-  checkNumber: number;
+  isChangeRequired: boolean;
 };
 
 type CardNumber = number;
@@ -15,7 +11,7 @@ type Card = {
   cardNumber: CardNumber;
 };
 
-type PaymentMethod = Cash | Check | Card;
+type PaymentMethod = Cash | Card;
 
 type Currency = "USD" | "EURO";
 
@@ -23,15 +19,6 @@ type Payment = {
   amount: number;
   currency: Currency;
   paymentMethod: PaymentMethod;
-};
-const myPayment: Payment = {
-  amount: 100,
-  currency: "EURO",
-  paymentMethod: {
-    type: "card",
-    cardNumber: 123,
-    cardType: "MasterCard",
-  },
 };
 
 type Size = "XS" | "S" | "M" | "L" | "XL";
@@ -53,55 +40,35 @@ type SpecialParcel = {
   description: string;
 };
 
-export type Parcel = DocumentsParcel | BoxParcel | SpecialParcel;
+type Parcel = DocumentsParcel | BoxParcel | SpecialParcel;
 
-const validateParcel = (parcel: Parcel): boolean => {
-  switch (parcel.parcelType) {
-    case "documents":
-      return true;
-    case "box":
-      return parcel.weight < 1000;
-    case "special":
-      return parcel.description !== "";
-    default: {
-      const _exhaustiveCheck: never = parcel;
-      return false;
-    }
-  }
+type RegisteredOrder = {
+  status: "registered";
+  parcel: Parcel;
 };
 
-type RequestStatus<T, E> = {
-  isLoading: boolean;
-  data: T | null;
-  error: E | null;
+type AssignedOrder = {
+  status: "assigned";
+  parcel: Parcel;
+  courier: number;
 };
 
-type RequestStatusUnion<T, E> =
-  | {
-      type: "success";
-      data: T;
-    }
-  | {
-      type: "fail";
-      error: E;
-    }
-  | {
-      type: "pending";
-    };
-
-const renderResult = (
-  result: RequestStatusUnion<string[], string>
-): string[] => {
-  switch (result.type) {
-    case "success":
-      return result.data;
-    case "fail":
-      return [result.error];
-    case "pending":
-      return [""];
-    default: {
-      const _exhaustiveCheck: never = result;
-      return ["unhandled error"];
-    }
-  }
+type ExecutingOrder = {
+  status: "executing";
+  parcel: Parcel;
+  courier: number;
+  address: string;
 };
+
+type CompletedOrder = {
+  status: "completed";
+  parcel: Parcel;
+  payment: Payment;
+  courier: number;
+};
+
+export type Order =
+  | RegisteredOrder
+  | AssignedOrder
+  | ExecutingOrder
+  | CompletedOrder;
