@@ -11,7 +11,7 @@ export type IEither<L, R> = {
   type: "left" | "right";
 };
 
-export const Right = <T>(value: T): IEither<never, T> => ({
+export const Right = <L, R>(value: R): IEither<L, R> => ({
   flatMap: (f) => f(value),
   map: (f) => Right(f(value)),
   mapLeft: () => Right(value),
@@ -28,7 +28,7 @@ export const Right = <T>(value: T): IEither<never, T> => ({
   type: "right",
 });
 
-export const Left = <T>(value: T): IEither<T, never> => ({
+export const Left = <L, R>(value: L): IEither<L, R> => ({
   flatMap: () => Left(value),
   map: () => Left(value),
   mapLeft: (f) => Left(f(value)),
