@@ -31,8 +31,8 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install Dependencies
-        run: npm install
         if: ${{ failure() }}
+        run: npm install
 
       - name: Build
         run: npm run build test
