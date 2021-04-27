@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: ["npm run test", "npm run build"]
+        command: [["Test", "npm run test"], ["Build", "npm run build"]]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -85,5 +85,5 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Build
-        run: ${{ matrix.command }}
+      - name: ${{ matrix.command[0] }}
+        run: ${{ matrix.command[1] }}
