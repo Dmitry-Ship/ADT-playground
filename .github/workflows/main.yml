@@ -33,35 +33,38 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-  test:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-          check-latest: true
+  # test:
+  #   needs: install
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "14"
+  #         check-latest: true
 
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: |
-            **/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+  #     - name: Cache node modules
+  #       uses: actions/cache@v2
+  #       env:
+  #         cache-name: cache-node-modules
+  #       with:
+  #         path: |
+  #           **/node_modules
+  #         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-build-${{ env.cache-name }}-
+  #           ${{ runner.os }}-build-
+  #           ${{ runner.os }}-
 
-      - name: Test
-        run: npm test
+  #     - name: Test
+  #       run: npm test
 
   build:
     needs: install
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        command: ["npm run test", "npm run build"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -83,4 +86,4 @@ jobs:
             ${{ runner.os }}-
 
       - name: Build
-        run: npm run build
+        run: ${{ matrix.command }}
