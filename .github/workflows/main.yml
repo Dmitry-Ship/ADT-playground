@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Main CI
 
 on:
   push:
@@ -7,6 +7,15 @@ on:
     branches: [master]
 
 jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run ESLint
+        run: eslint . --ext .js,.jsx,.ts,.tsx
+
   install:
     runs-on: ubuntu-latest
 
@@ -57,12 +66,3 @@ jobs:
 
       - name: Build
         run: ${{ matrix.command }}
-
-  eslint:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Check eslint rules
-        run: xargs npx eslint < eslint_files
