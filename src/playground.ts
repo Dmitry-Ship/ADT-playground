@@ -1,5 +1,4 @@
 import { IEither, Left, Right } from "./monads/either";
-import { makeAPICall } from "./utils/api";
 export {};
 
 type User = {
