@@ -32,6 +32,10 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        if: ${{ failure() }}
+
+      - name: Build
+        run: npm run build test
 
       - name: Test
         run: npm test
