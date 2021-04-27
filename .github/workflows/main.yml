@@ -61,7 +61,8 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-      - uses: netlify/actions/cli@master 
+    steps:
+      - uses: netlify/actions/cli@master
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
