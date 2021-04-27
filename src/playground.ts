@@ -28,7 +28,6 @@ const validateUser = (user: User): IEither<string, User> => {
 
   return Right(user);
 };
-
 const john: User = {
   name: "John",
   email: "vooxil@gmail.com",
