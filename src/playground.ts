@@ -1,39 +1,40 @@
 import { IEither, Left, Right } from "./monads/either";
-import { main, Parcel } from "./parcel FP";
+import { makeAPICall } from "./utils/api";
 export {};
+
+type User = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 const isEmailValid = (email: string): boolean =>
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
     email
   );
 
-const validateEmail = (email: string): IEither<string, string> =>
-  isEmailValid(email) ? Right(email) : Left("invalid email");
+const validateUser = (user: User): IEither<string, User> => {
+  if (!isEmailValid(user.email)) {
+    return Left("invalid email");
+  }
 
-const p: Parcel = {
-  parcelType: "special",
-  weight: 0,
-  size: "M",
-  description: "",
+  if (user.name.length < 2) {
+    return Left("invalid name");
+  }
+
+  if (user.password.length < 10) {
+    return Left("invalid password");
+  }
+
+  return Right(user);
 };
 
-const email = validateEmail("bob@.com")
-  .map((e) => `📧  ${e}`)
-  .getOrElse((val) => val);
+const john: User = {
+  name: "John",
+  email: "vooxil@gmail.com",
+  password: "qwerty",
+};
 
-console.log("email", email);
+const result = validateUser(john);
 
-main(p);
-
-// const writable = <T>(log: string, f: (arg: T) => T) => (value: T) =>
-//   Writer(log, f(value));
-// const increment = (value: number): number => value + 1;
-
-// const val = Writer("started with 5", 5)
-//   .map(increment)
-//   .flatMap((value) => Writer("continues with", increment(value)))
-//   .flatMap(writable("continues with", increment))
-//   .writable("continues with", increment);
-
-// console.log("log", val.getFirst());
-// console.log("val", val.getSecond());
+result.map((u) => u.name.toUpperCase());
