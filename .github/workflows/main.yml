@@ -64,13 +64,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: [["Test", "npm run test"], ["Build", "npm run build"]]
+        command: ["npm run test", "npm run build"]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-          check-latest: true
+      # - uses: actions/checkout@v2
+      # - uses: actions/setup-node@v2
+      #   with:
+      #     node-version: "14"
+      #     check-latest: true
 
       - name: Cache node modules
         uses: actions/cache@v2
@@ -85,5 +85,5 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: ${{ matrix.command[0] }}
-        run: ${{ matrix.command[1] }}
+      - name: ${{ matrix.command }}
+        run: ${{ matrix.command }}
