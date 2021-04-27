@@ -34,8 +34,8 @@ jobs:
         if: ${{ failure() }}
         run: npm install
 
-      - name: Build
-        run: npm run build test
-
       - name: Test
         run: npm test
+
+      - name: Build
+        run: npm run build
