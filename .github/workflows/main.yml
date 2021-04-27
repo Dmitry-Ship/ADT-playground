@@ -33,22 +33,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-  eslint:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Run ESLint
-        run: npm run eslint
-
   build:
     needs: install
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: ["npm run test", "npm run build"]
+        command: ["npm run test", "npm run build", "npm run eslint"]
     steps:
       - uses: actions/checkout@v2
 
