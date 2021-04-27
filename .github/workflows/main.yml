@@ -7,15 +7,6 @@ on:
     branches: [master]
 
 jobs:
-  eslint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Run ESLint
-        run: eslint . --ext .js,.jsx,.ts,.tsx
-
   install:
     runs-on: ubuntu-latest
 
@@ -41,6 +32,16 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+  eslint:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run ESLint
+        run: eslint . --ext .js,.jsx,.ts,.tsx
 
   build:
     needs: install
